@@ -1,5 +1,10 @@
 # ANSI color and style utilities for terminal output
 
+# Enable unicode support in Windows CMD/PowerShell
+if isWindows()
+	systemSilent("chcp 65001")
+ok
+
 # Colors
 COLOR_RESET     = char(27) + "[0m"
 COLOR_BOLD      = char(27) + "[1m"
