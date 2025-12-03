@@ -41,9 +41,9 @@ jobs:
         run: |
           mkdir -p deb-pkg/DEBIAN
           mkdir -p deb-pkg/usr/bin
-          mkdir -p deb-pkg/usr/lib/im2ansi
+          mkdir -p deb-pkg/usr/lib
           cp target/linux/dist_using_scripts/bin/im2ansi deb-pkg/usr/bin/
-          cp -r target/linux/dist_using_scripts/lib/* deb-pkg/usr/lib/im2ansi/
+          cp -r target/linux/dist_using_scripts/lib/* deb-pkg/usr/lib/
           cat > deb-pkg/DEBIAN/control << 'EOF'
           Package: im2ansi
           Version: ${GITHUB_REF_NAME#v}
@@ -61,9 +61,9 @@ jobs:
           sudo apt-get update && sudo apt-get install -y rpm
           mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin
-          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/im2ansi
+          mkdir -p rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib
           cp target/linux/dist_using_scripts/bin/im2ansi rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/bin/
-          cp -r target/linux/dist_using_scripts/lib/* rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/im2ansi/
+          cp -r target/linux/dist_using_scripts/lib/* rpmbuild/BUILDROOT/im2ansi-1.0.0-1.${{ matrix.rpm_arch }}/usr/lib/
           cat > rpmbuild/SPECS/im2ansi.spec << 'EOF'
           Name: im2ansi
           Version: 1.0.0
@@ -77,8 +77,10 @@ jobs:
           
           %files
           /usr/bin/im2ansi
-          /usr/lib/im2ansi/*
           EOF
+          for f in target/linux/dist_using_scripts/lib/*; do
+            echo "/usr/lib/$(basename "$f")" >> rpmbuild/SPECS/im2ansi.spec
+          done
           rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/im2ansi.spec
           cp rpmbuild/RPMS/${{ matrix.rpm_arch }}/*.rpm im2ansi-linux-${{ matrix.rpm_arch }}.rpm
 
