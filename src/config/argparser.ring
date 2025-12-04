@@ -12,10 +12,10 @@ func getAppName()
 
 # Parse command line arguments and populate config
 func parseArgs(config)
-	args = sysargv
+	args = AppArguments()
 	nArgsLen = len(args)
 	
-	for i = 2 to nArgsLen
+	for i = 1 to nArgsLen
 		arg = lower(args[i])
 		switch arg
 			on "--path"
